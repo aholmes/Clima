@@ -1,12 +1,13 @@
-﻿using System.Text.Json.Serialization;
+﻿
+using Newtonsoft.Json;
 
 namespace CommonContracts.Models
 {
     public class TemperatureModel
     {
-        [JsonPropertyName("temperature")]
+        [JsonProperty("temperature")]
         public string Temperature { get; set; }
-        [JsonPropertyName("dateTime")]
+        [JsonProperty("dateTime")]
         public string DateTime { get; set; }
     }
 }

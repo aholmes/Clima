@@ -1,52 +1,53 @@
 ﻿using System;
+using Newtonsoft.Json;
 using SQLite;
 using MU = Meadow.Units;
 
 namespace MeadowClimaProKit.Database
 {
-    [Table("ClimateReadings")]
+    //[Table("ClimateReadings")]
     public class ClimateReading
     {
-        [PrimaryKey, AutoIncrement]
-        public int? ID { get; set; }
+        //[PrimaryKey, AutoIncrement]
+        public int ID { get; set; }
 
-        public double? TemperatureValue
+        public double TemperatureValue
         {
-            get => Temperature?.Celsius;
-            set => Temperature = new MU.Temperature(value.Value, MU.Temperature.UnitType.Celsius);
+            get => Temperature?.Celsius ?? 0;
+            set => Temperature = new MU.Temperature(value, MU.Temperature.UnitType.Celsius);
         }
 
-        public double? PressureValue
+        public double PressureValue
         {
-            get => Pressure?.Bar;
-            set => Pressure = new MU.Pressure(value.Value, MU.Pressure.UnitType.Bar);
+            get => Pressure?.Bar ?? 0;
+            set => Pressure = new MU.Pressure(value, MU.Pressure.UnitType.Bar);
         }
 
-        public double? HumidityValue
+        public double HumidityValue
         {
-            get => Humidity?.Percent;
-            set => Humidity = new MU.RelativeHumidity(value.Value, MU.RelativeHumidity.UnitType.Percent);
+            get => Humidity?.Percent ?? 0;
+            set => Humidity = new MU.RelativeHumidity(value, MU.RelativeHumidity.UnitType.Percent);
         }
 
-        public double? RainFallValue
+        public double RainFallValue
         {
-            get => RainFall?.Millimeters;
-            set => RainFall = new MU.Length(value.Value, MU.Length.UnitType.Millimeters);
+            get => RainFall?.Millimeters ?? 0;
+            set => RainFall = new MU.Length(value, MU.Length.UnitType.Millimeters);
         }
 
-        public double? WindDirectionValue
+        public double WindDirectionValue
         {
-            get => WindDirection?.DecimalDegrees;
-            set => WindDirection = new MU.Azimuth(value.Value);
+            get => WindDirection?.DecimalDegrees ?? 0;
+            set => WindDirection = new MU.Azimuth(value);
         }
 
-        public double? WindSpeedValue
+        public double WindSpeedValue
         {
-            get => WindSpeed?.KilometersPerHour;
-            set => WindSpeed = new MU.Speed(value.Value, MU.Speed.UnitType.KilometersPerHour);
+            get => WindSpeed?.KilometersPerHour ?? 0;
+            set => WindSpeed = new MU.Speed(value, MU.Speed.UnitType.KilometersPerHour);
         }
 
-        [Indexed]
+        //[Indexed]
         public DateTime DateTime { get; set; }
 
         /// <summary>
@@ -54,17 +55,23 @@ namespace MeadowClimaProKit.Database
         /// </summary>
         public bool Synchronized { get; set; }
 
-        [Ignore]
+        //[Ignore]
+        [JsonIgnore]
         public MU.Temperature? Temperature { get; set; }
-        [Ignore]
+        //[Ignore]
+        [JsonIgnore]
         public MU.Pressure? Pressure { get; set; }
-        [Ignore]
+        //[Ignore]
+        [JsonIgnore]
         public MU.RelativeHumidity? Humidity { get; set; }
-        [Ignore]
+        //[Ignore]
+        [JsonIgnore]
         public MU.Length? RainFall { get; set; }
-        [Ignore]
+        //[Ignore]
+        [JsonIgnore]
         public MU.Azimuth? WindDirection { get; set; }
-        [Ignore]
+        //[Ignore]
+        [JsonIgnore]
         public MU.Speed? WindSpeed { get; set; }
     }
 }

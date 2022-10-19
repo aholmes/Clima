@@ -10,7 +10,7 @@ using System;
 
 namespace MeadowClimaProKit.Tests
 {
-    public class MeadowApp : App<F7MicroV2, MeadowApp>
+    public class MeadowApp : App<F7FeatherV2, MeadowApp>
     {
         II2cBus? i2c;
         Bme680? bme680;

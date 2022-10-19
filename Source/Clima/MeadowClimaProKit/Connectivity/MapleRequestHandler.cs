@@ -4,6 +4,8 @@ using Meadow.Foundation.Web.Maple.Server;
 using Meadow.Foundation.Web.Maple.Server.Routing;
 using MeadowClimaProKit.Controller;
 using MeadowClimaProKit.Database;
+using System;
+using System.Linq;
 using System.Collections.Generic;
 
 namespace MeadowClimaProKit.Connectivity
@@ -15,10 +17,14 @@ namespace MeadowClimaProKit.Connectivity
         [HttpGet]
         public void GetClimateLogs()
         {
+            Console.WriteLine("Maple: handling request.");
+
             LedController.Instance.SetColor(Color.Magenta);
 
-            var logs = DatabaseManager.Instance.GetAllClimateReadings();
+            Console.WriteLine("Maple: reading database.");
+            var logs = DatabaseManager.Instance.GetAllClimateReadings().Select(o => o.Value);
 
+            Console.WriteLine("Maple: database read.");
             var data = new List<ClimateModel>();
             foreach (var log in logs)
             {
@@ -32,6 +38,9 @@ namespace MeadowClimaProKit.Connectivity
                     WindSpeed = log.WindSpeed.ToString()
                 });
             }
+
+            Console.WriteLine("Maple: sending response.");
+            Console.WriteLine($"Maple: response data: {Newtonsoft.Json.JsonConvert.SerializeObject(data)}");
 
             LedController.Instance.SetColor(Color.Green);
 

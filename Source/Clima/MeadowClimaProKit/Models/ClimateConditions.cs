@@ -1,17 +1,17 @@
 ﻿using MeadowClimaProKit.Database;
+using System;
 
 namespace MeadowClimaProKit.Models
 {
     public class ClimateConditions
     {
-        public ClimateReading? New { get; set; }
-        public ClimateReading? Old { get; set; }
+        public ClimateReading New { get; set; }
+        public ClimateReading Old { get; set; }
 
-        public ClimateConditions() { }
         public ClimateConditions(ClimateReading newClimate, ClimateReading oldClimate)
         {
-            New = newClimate;
-            Old = oldClimate;
+            New = newClimate ?? throw new ArgumentNullException(nameof(newClimate));
+            Old = oldClimate ?? throw new ArgumentNullException(nameof(oldClimate));
         }
     }
 }
