@@ -26,7 +26,7 @@ namespace MeadowClimaProKit
     /// </summary>
     public class ClimateMonitorAgent
     {
-        private static TimeSpan UPDATE_WAIT_TIMESPAN = TimeSpan.FromSeconds(5);
+        private static TimeSpan UPDATE_WAIT_TIMESPAN = TimeSpan.FromSeconds(10);
 
         private static readonly Lazy<ClimateMonitorAgent> instance =
             new Lazy<ClimateMonitorAgent>(() => new ClimateMonitorAgent());

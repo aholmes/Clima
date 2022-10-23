@@ -1,29 +1,29 @@
 ﻿
-using Newtonsoft.Json;
+using System.Text.Json.Serialization;
 
 namespace CommonContracts.Models
 {
     public class ClimateModel
     {
-        [JsonProperty("date")]
+        [JsonPropertyName("date")]
         public string Date { get; set; }
 
-        [JsonProperty("temperature")]
+        [JsonPropertyName("temperature")]
         public string Temperature { get; set; }
 
-        [JsonProperty("pressure")]
+        [JsonPropertyName("pressure")]
         public string Pressure { get; set; }
 
-        [JsonProperty("humdity")]
+        [JsonPropertyName("humdity")]
         public string Humidity { get; set; }
 
-        [JsonProperty("rain")]
+        [JsonPropertyName("rain")]
         public string Rain { get; set; }
 
-        [JsonProperty("windspeed")]
+        [JsonPropertyName("windspeed")]
         public string WindSpeed { get; set; }
 
-        [JsonProperty("winddirection")]
+        [JsonPropertyName("winddirection")]
         public string WindDirection { get; set; }
     }
 }

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Net.Http;
+using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace MeadowClimaProKit.ServiceAccessLayer
@@ -27,7 +28,7 @@ namespace MeadowClimaProKit.ServiceAccessLayer
 
                     response.EnsureSuccessStatusCode();
                     string json = await response.Content.ReadAsStringAsync();
-                    var values = Newtonsoft.Json.JsonConvert.DeserializeObject<DateTimeEntity>(json);
+                    var values = JsonSerializer.Deserialize<DateTimeEntity>(json);
 
                     stopwatch.Stop();
 

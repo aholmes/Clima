@@ -1,6 +1,5 @@
 ﻿using System;
-using Newtonsoft.Json;
-using SQLite;
+using System.Text.Json.Serialization;
 using MU = Meadow.Units;
 
 namespace MeadowClimaProKit.Database

@@ -49,6 +49,9 @@ namespace MeadowClimaProKit
             {
                 throw new Exception($"Cannot connect to network: {result.ConnectionStatus}");
             }
+            Device.WiFiAdapter.AutomaticallyReconnect = true;
+            Device.WiFiAdapter.AutomaticallyStartNetwork = true;
+            Console.WriteLine($"Wifi IP address: {Device.WiFiAdapter.IpAddress}");
 
             await DateTimeService.GetTimeAsync();
 

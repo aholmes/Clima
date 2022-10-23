@@ -1,7 +1,7 @@
 ﻿using Meadow;
 using Meadow.Foundation;
 using MeadowClimaProKit.Controller;
-using Newtonsoft.Json;
+using System.Text.Json;
 using SQLite;
 using System;
 using System.Collections.Generic;
@@ -34,9 +34,9 @@ namespace MeadowClimaProKit.Database
 
         private void _write(object? value)
         {
+            var json = JsonSerializer.Serialize(value);
             lock (_db_lock)
             {
-                var json = JsonConvert.SerializeObject(value);
                 _databaseFile.Seek(0, SeekOrigin.Begin);
                 _dbWriter.Write(json);
             }
@@ -44,12 +44,13 @@ namespace MeadowClimaProKit.Database
 
         private T? _read<T>()
         {
+            string contents;
             lock (_db_lock)
             {
                 _databaseFile.Seek(0, SeekOrigin.Begin);
-                var contents = _dbReader.ReadToEnd();
-                return JsonConvert.DeserializeObject<T>(contents);
+                contents = _dbReader.ReadToEnd();
             }
+            return JsonSerializer.Deserialize<T>(contents);
         }
 
         protected void Initialize() 

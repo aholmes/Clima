@@ -7,6 +7,7 @@ using MeadowClimaProKit.Database;
 using System;
 using System.Linq;
 using System.Collections.Generic;
+using System.Text.Json;
 
 namespace MeadowClimaProKit.Connectivity
 {
@@ -40,7 +41,7 @@ namespace MeadowClimaProKit.Connectivity
             }
 
             Console.WriteLine("Maple: sending response.");
-            Console.WriteLine($"Maple: response data: {Newtonsoft.Json.JsonConvert.SerializeObject(data)}");
+            Console.WriteLine($"Maple: response data: {JsonSerializer.Serialize(data)}");
 
             LedController.Instance.SetColor(Color.Green);
 
