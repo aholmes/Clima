@@ -9,6 +9,7 @@ using Meadow.Foundation.Sensors.Weather;
 using MeadowClimaProKit.Database;
 using Meadow.Hardware;
 using System.Collections.Generic;
+using System.Text;
 
 namespace MeadowClimaProKit
 {
@@ -25,6 +26,8 @@ namespace MeadowClimaProKit
     /// </summary>
     public class ClimateMonitorAgent
     {
+        private static TimeSpan UPDATE_WAIT_TIMESPAN = TimeSpan.FromSeconds(5);
+
         private static readonly Lazy<ClimateMonitorAgent> instance =
             new Lazy<ClimateMonitorAgent>(() => new ClimateMonitorAgent());
         public static ClimateMonitorAgent Instance => instance.Value;
@@ -86,29 +89,23 @@ namespace MeadowClimaProKit
             Console.WriteLine("WindVane up.");
 
             anemometer = new SwitchingAnemometer(Device, Device.Pins.A01);
-            anemometer.UpdateInterval = TimeSpan.FromSeconds(10);
+            anemometer.UpdateInterval = UPDATE_WAIT_TIMESPAN;
             anemometer.StartUpdating();
             Console.WriteLine("Anemometer up.");
 
-            /*
             rainGauge = new SwitchingRainGauge(Device, Device.Pins.D15);
             Console.WriteLine("Rain gauge up.");
-            */
 
-            return StartUpdating(TimeSpan.FromSeconds(5));
+            return StartUpdating(UPDATE_WAIT_TIMESPAN);
         }
 
         Task StartUpdating(TimeSpan updateInterval)
         {
-            Console.WriteLine("ClimateMonitorAgent.StartUpdating()");
-
             lock(samplingLock)
             {
                 if(IsSampling)
-                {
-                    Console.WriteLine("IsSampling");
                     return Task.FromResult<bool>(false);
-                }
+
                 IsSampling = true;
 
                 SamplingTokenSource = new CancellationTokenSource();
@@ -140,23 +137,25 @@ namespace MeadowClimaProKit
                             oldClimate = climate;
 
                             Console.WriteLine("ClimateMonitorAgent: Reading complete.");
-                            var i = DatabaseManager.Instance;
-                            Console.WriteLine($"{nameof(ClimateMonitorAgent)}: DatabaseManager instance initialized, reading result.");
-                            var r = result.New;
-                            Console.WriteLine($"{nameof(ClimateMonitorAgent)}: Saving reading.");
-                            i.SaveReading(r);
+                            DatabaseManager.Instance.SaveReading(result.New);
                             Console.WriteLine("ClimateMonitorAgent: Saved reading.");
 
                             //ClimateConditionsUpdated.Invoke(this, result);
 
                             // sleep for the appropriate interval
-                            await Task.Delay(5000, SamplingTokenSource.Token).ConfigureAwait(false);
+                            await Task.Delay(UPDATE_WAIT_TIMESPAN, SamplingTokenSource.Token).ConfigureAwait(false);
                             //await Task.Delay(updateInterval, SamplingTokenSource.Token).ConfigureAwait(false);
                         }
                     }
+                    catch(Exception e)
+                    {
+                        var sb = new StringBuilder($"Error in main read loop:{Environment.NewLine}");
+                        sb.AppendLine(e.Message);
+                        sb.AppendLine(e.StackTrace);
+                        Console.WriteLine(sb);
+                    }
                     finally
                     {
-                        Console.WriteLine("Clearing 'IsSampling'.");
                         IsSampling = false;
                     }
                 }, SamplingTokenSource.Token);

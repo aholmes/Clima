@@ -21,23 +21,19 @@ namespace MeadowClimaProKit
         {
             InitializeBluetooth();
 
-            //var mapleServer = InitializeMaple().Result;
-            //Console.WriteLine("Start maple");
-            //mapleServer.Start();
+            var mapleServer = InitializeMaple().Result;
+            mapleServer.Start();
 
             return InitializeClimateMonitor();
-            Console.WriteLine("Application startup complete");
         }
 
         void InitializeBluetooth()
         {
-            Console.WriteLine("Initialize bluetooth");
-            BluetoothServer.Instance.Initialize();
+            //BluetoothServer.Instance.Initialize();
         }
 
         Task InitializeClimateMonitor()
         {
-            Console.WriteLine("Initialize climate monitor");
             return ClimateMonitorAgent.Instance.Initialize();
         }
 

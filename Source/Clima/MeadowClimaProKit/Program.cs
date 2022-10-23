@@ -7,7 +7,7 @@ namespace MeadowClimaProKit
     class Program
     {
         static IApp app;
-        public static async Task Main(string[] args)
+        public static void Main(string[] args)
         {
             // instantiate and run new meadow app
             app = new MeadowApp();
