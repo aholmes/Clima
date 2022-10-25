@@ -89,12 +89,13 @@ namespace MeadowClimaProKit
             Console.WriteLine("WindVane up.");
 
             anemometer = new SwitchingAnemometer(Device, Device.Pins.A01);
-            anemometer.UpdateInterval = UPDATE_WAIT_TIMESPAN;
             anemometer.StartUpdating();
             Console.WriteLine("Anemometer up.");
 
+            /*
             rainGauge = new SwitchingRainGauge(Device, Device.Pins.D15);
             Console.WriteLine("Rain gauge up.");
+            */
 
             return StartUpdating(UPDATE_WAIT_TIMESPAN);
         }

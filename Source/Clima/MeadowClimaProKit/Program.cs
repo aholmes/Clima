@@ -1,4 +1,5 @@
-﻿using System.Threading;
+﻿/*
+using System.Threading;
 using System.Threading.Tasks;
 using Meadow;
 
@@ -19,8 +20,10 @@ namespace MeadowClimaProKit
                 System.Console.WriteLine($"{nameof(Program)}: Sleeping 5s.");
                 Thread.Sleep(5000);
             }*/
+/*
             System.Console.WriteLine($"{nameof(Program)}: Application init task finished. Sleeping.");
             Thread.Sleep(Timeout.Infinite);
         }
     }
 }
+*/

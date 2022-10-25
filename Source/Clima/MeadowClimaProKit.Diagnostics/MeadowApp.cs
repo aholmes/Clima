@@ -10,11 +10,10 @@ using System;
 
 namespace MeadowClimaProKit.Tests
 {
-    public class MeadowApp : App<F7FeatherV2, MeadowApp>
+    public class MeadowApp : App<F7FeatherV2>
     {
         II2cBus? i2c;
         Bme680? bme680;
-        Bme280? bme280;
         WindVane windVane;
         RgbPwmLed onboardLed;
         SwitchingAnemometer anemometer;
@@ -89,27 +88,9 @@ namespace MeadowClimaProKit.Tests
                     bme680 = null;
                     Console.WriteLine($"Bme680 failed bring-up: {e.Message}");
                 }
-
-                if (bme680 == null)
-                {
-                    Console.WriteLine("Trying it as a BME280.");
-                    try
-                    {
-                        bme280 = new Bme280(i2c, (byte)Bme280.Addresses.Default);
-                        Console.WriteLine("Bme280 successully initialized.");
-                        var bmeObserver = Bme280.CreateObserver(
-                            handler: result => Console.WriteLine($"Temp: {result.New.Temperature.Value.Fahrenheit:n2}, Humidity: {result.New.Humidity.Value.Percent:n2}%"),
-                            filter: result => true);
-                        bme280.Subscribe(bmeObserver);
-                    }
-                    catch (Exception e2)
-                    {
-                        Console.WriteLine($"Bme280 failed bring-up: {e2.Message}");
-                    }
-                }
             }
 
-            if (bme680 != null || bme280 != null)
+            if (bme680 != null)
             {
                 onboardLed.StartPulse(Color.Green);
                 Console.WriteLine("Success. Board is good.");
