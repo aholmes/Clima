@@ -54,10 +54,10 @@ namespace MeadowClimaProKit
             {
                 bme680 = new Bme680(i2c, (byte)Bme680.Addresses.Address_0x76);
                 Console.WriteLine("Bme680 successully initialized.");
-                var bmeObserver = Bme680.CreateObserver(
+                /*var bmeObserver = Bme680.CreateObserver(
                     handler: result => Console.WriteLine($"Temp: {result.New.Temperature.Value.Fahrenheit:n2}, Humidity: {result.New.Humidity.Value.Percent:n2}%"),
                     filter: result => true);
-                bme680.Subscribe(bmeObserver);
+                bme680.Subscribe(bmeObserver);*/
             }
             catch(Exception e)
             {
@@ -115,7 +115,8 @@ namespace MeadowClimaProKit
                 var oldClimate = new ClimateReading();
 
                 Console.WriteLine("Starting Climate Monitor Agent loop.");
-                var updateTask = Task.Run(async () =>
+                //var updateTask = Task.Run(async () =>
+                var updateTask = Task.Run(() =>
                 {
                     try
                     {
@@ -131,7 +132,8 @@ namespace MeadowClimaProKit
                                 break;
                             }
 
-                            var climate = await Read();
+                            //var climate = await Read();
+                            var climate = Read().Result;
 
                             // build a new result with the old and new conditions
                             var result = new ClimateConditions(climate, oldClimate);
@@ -144,7 +146,13 @@ namespace MeadowClimaProKit
                             //ClimateConditionsUpdated.Invoke(this, result);
 
                             // sleep for the appropriate interval
-                            await Task.Delay(UPDATE_WAIT_TIMESPAN, SamplingTokenSource.Token).ConfigureAwait(false);
+                            //await Task.Delay(UPDATE_WAIT_TIMESPAN, SamplingTokenSource.Token).ConfigureAwait(false);
+                            Thread.Sleep(UPDATE_WAIT_TIMESPAN);//, SamplingTokenSource.Token).ConfigureAwait(false);
+                            if (SamplingTokenSource.IsCancellationRequested)
+                            {
+                                Console.WriteLine("Cancellation requested.");
+                                return;
+                            }
                             //await Task.Delay(updateInterval, SamplingTokenSource.Token).ConfigureAwait(false);
                         }
                     }
@@ -154,6 +162,7 @@ namespace MeadowClimaProKit
                         sb.AppendLine(e.Message);
                         sb.AppendLine(e.StackTrace);
                         Console.WriteLine(sb);
+                        StopUpdating();
                     }
                     finally
                     {

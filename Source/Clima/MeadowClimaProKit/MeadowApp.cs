@@ -16,16 +16,21 @@ namespace MeadowClimaProKit
     {
         public MeadowApp()
         {
+            AppDomain.CurrentDomain.FirstChanceException += (s, e) =>
+            {
+                Console.WriteLine(e.Exception);
+            };
         }
 
-        public override async Task Initialize()
+        public override Task Initialize()
         {
             InitializeBluetooth();
 
-            await InitializeMaple();
+            return InitializeMaple()
+                .ContinueWith(t => InitializeClimateMonitor());
 
             //return Task.FromResult<object>(null);
-            await InitializeClimateMonitor();
+            //return InitializeClimateMonitor();
         }
 
         void InitializeBluetooth()
