@@ -90,7 +90,7 @@ namespace MeadowClimaProKit.Connectivity
                     Pressure = log.Value.Pressure.ToString(),
                     Humidity = log.Value.Humidity.ToString(),
                     WindDirection = log.Value.WindDirection.ToString(),
-                    WindSpeed = log.Value.WindSpeed.ToString()
+                    WindSpeed = log.Value.WindSpeed?.MilesPerHour.ToString() ?? "0"
                 });
             }
 

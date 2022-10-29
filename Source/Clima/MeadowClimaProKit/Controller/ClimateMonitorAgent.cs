@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using MeadowClimaProKit.Models;
@@ -7,8 +6,6 @@ using Meadow;
 using Meadow.Foundation.Sensors.Atmospheric;
 using Meadow.Foundation.Sensors.Weather;
 using MeadowClimaProKit.Database;
-using Meadow.Hardware;
-using System.Collections.Generic;
 using System.Text;
 
 namespace MeadowClimaProKit
@@ -42,7 +39,7 @@ namespace MeadowClimaProKit
         Bme680? bme680;
         //Bme280? bme280;
         WindVane? windVane;
-        SwitchingAnemometer? anemometer;
+        SwitchingAnemometerFoo? anemometer;
         SwitchingRainGauge? rainGauge;
 
         private ClimateMonitorAgent() { }
@@ -65,30 +62,10 @@ namespace MeadowClimaProKit
                 Console.WriteLine($"Bme680 failed bring-up: {e.Message}");
             }
 
-            /*
-            if(bme680 == null)
-            {
-                Console.WriteLine("Trying it as a BME280.");
-                try
-                {
-                    bme280 = new Bme280(i2c, (byte)Bme280.Addresses.Default);
-                    Console.WriteLine("Bme280 successully initialized.");
-                    var bmeObserver = Bme280.CreateObserver(
-                        handler: result => Console.WriteLine($"Temp: {result.New.Temperature.Value.Fahrenheit:n2}, Humidity: {result.New.Humidity.Value.Percent:n2}%"),
-                        filter: result => true);
-                    bme280.Subscribe(bmeObserver);
-                }
-                catch(Exception e2)
-                {
-                    Console.WriteLine($"Bme280 failed bring-up: {e2.Message}");
-                }
-            }
-            */
-
-            windVane = new WindVane(Device, Device.Pins.A00);
+            windVane = new WindVane(Device, MeadowApp.Device.Pins.A00);
             Console.WriteLine("WindVane up.");
 
-            anemometer = new SwitchingAnemometer(Device, Device.Pins.A01);
+            anemometer = new SwitchingAnemometerFoo(Device, MeadowApp.Device.Pins.A01);
             anemometer.StartUpdating();
             Console.WriteLine("Anemometer up.");
 
@@ -194,6 +171,8 @@ namespace MeadowClimaProKit
             var windVaneTask = windVane?.Read();
             //var rainFallTask = rainGauge?.Read();
 
+            Console.WriteLine($"Anemometer: {anemometer.UpdateInterval} | {anemometer.WindSpeed} | {anemometer.SampleCount} | {anemometer.NoWindTimeout} | {anemometer.KmhPerSwitchPerSecond}");
+
             /*
             var tasks = new Dictionary<string, Task?>
             {
@@ -226,7 +205,7 @@ namespace MeadowClimaProKit
                 Humidity = bme680Task?.Result.Humidity,
                 //RainFall = rainFallTask?.Result,
                 WindDirection = windVaneTask?.Result,
-                WindSpeed = anemometer?.WindSpeed,
+                WindSpeed = anemometer?.WindSpeed
             };
 
             return climate;
