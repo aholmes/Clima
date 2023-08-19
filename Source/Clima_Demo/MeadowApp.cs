@@ -1,6 +1,8 @@
 ﻿using Meadow;
 using Meadow.Devices;
 using Meadow.Foundation;
+using Meadow.Foundation.Web.Maple;
+using Meadow.Hardware;
 using Meadow.Peripherals.Sensors.Location.Gnss;
 using Meadow.Units;
 using System;
@@ -9,7 +11,7 @@ using System.Threading.Tasks;
 namespace Clima_Demo
 {
     // Change F7FeatherV2 to F7FeatherV1 for V1.x boards
-    public class MeadowApp : App<F7CoreComputeV2>
+    public class MeadowApp : App<F7FeatherV2>
     {
         IClimaHardware clima;
 
@@ -19,8 +21,15 @@ namespace Clima_Demo
 
             Resolver.Log.Info("Initialize hardware...");
 
-            clima = Clima.Create();
+            var wifi = Device.NetworkAdapters.Primary<IWiFiNetworkAdapter>();
+            wifi.NetworkConnected += (sender, args) =>
+            {
+                var mapleServer = new MapleServer(sender.IpAddress, 5417, true, logger: Resolver.Log);
+                mapleServer.Start();
+            };
+            wifi.ConnectToDefaultAccessPoint();
 
+            clima = Clima.Create();
             Resolver.Log.Info($"Running on Clima Hardware {clima.RevisionString}");
 
             if (clima.AtmosphericSensor is { } bme688)
@@ -152,31 +161,37 @@ namespace Clima_Demo
 
         private void Bme688Updated(object sender, IChangeResult<(Temperature? Temperature, RelativeHumidity? Humidity, Pressure? Pressure, Resistance? GasResistance)> e)
         {
+            Climate.Bme688 = e.New;
             Resolver.Log.Info($"BME688:        {(int)e.New.Temperature?.Celsius:0.0}C, {(int)e.New.Humidity?.Percent:0.#}%, {(int)e.New.Pressure?.Millibar:0.#}mbar");
         }
 
         private void SolarVoltageUpdated(object sender, IChangeResult<Voltage> e)
         {
+            Climate.SolarVoltage = e.New;
             Resolver.Log.Info($"Solar Voltage: {e.New.Volts:0.#} volts");
         }
 
         private void AnemometerUpdated(object sender, IChangeResult<Speed> e)
         {
+            Climate.Anemometer = e.New;
             Resolver.Log.Info($"Anemometer:    {e.New.MetersPerSecond:0.#} m/s");
         }
 
         private void RainGuageUpdated(object sender, IChangeResult<Length> e)
         {
+            Climate.RainGuage = e.New;
             Resolver.Log.Info($"Rain Gauge:    {e.New.Millimeters:0.#} mm");
         }
 
         private void WindvaneUpdated(object sender, IChangeResult<Azimuth> e)
         {
+            Climate.Windvane = e.New;
             Resolver.Log.Info($"Wind Vane:     {e.New.Compass16PointCardinalName} ({e.New.Radians:0.#} radians)");
         }
 
         private void Scd40Updated(object sender, IChangeResult<(Concentration? Concentration, Temperature? Temperature, RelativeHumidity? Humidity)> e)
         {
+            Climate.Scd40 = e.New;
             Resolver.Log.Info($"SCD40:         {e.New.Concentration.Value.PartsPerMillion:0.#}ppm, {e.New.Temperature.Value.Celsius:0.0}C, {e.New.Humidity.Value.Percent:0.0}%");
         }
     }
